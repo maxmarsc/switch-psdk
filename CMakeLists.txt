@@ -1,7 +1,6 @@
-## Declare project
+# Declare project
 cmake_minimum_required(VERSION 3.28)
 project(switch-psdk)
-
 
 # We set the C standard to 11.
 set(CMAKE_C_STANDARD 23)
@@ -11,13 +10,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
-## CMake modules
+# CMake modules
 
-# We have to add the cmake directory to have access to
-# the Switch tools and also find_package for libnx.
+# We have to add the cmake directory to have access to the Switch tools and also
+# find_package for libnx.
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-## Required libraries and utilities
+# Required libraries and utilities
 
 # SwitchTools provide various helper functions for building Switch file formats.
 include(SwitchTools)
@@ -40,6 +39,5 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
 
   link_libraries(arm_neon_clangd_fix)
 endif()
-
 
 add_subdirectory(templates)
