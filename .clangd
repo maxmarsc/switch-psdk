@@ -1,0 +1,10 @@
+---
+If:
+  PathMatch: extras/clangd/llvm_arm_neon.h
+Diagnostics:
+  Suppress: '*'
+
+---
+CompileFlags:
+  Add: [-D__CLANGD__, --target=aarch64-none-elf]
+  Remove: [-mtp=soft, -march=armv8-a+crc+crypto]

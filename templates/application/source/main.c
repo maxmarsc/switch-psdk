@@ -3,6 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(__CLANGD__)
+#include "arm_neon_clangd_fix.h"
+#include "arm_acle_clangd_fix.h"
+#endif
+
 // Include the main libnx system header, for Switch development
 #include <switch.h>
 
@@ -34,9 +39,9 @@ int main(int argc, char* argv[])
 
 		// padGetButtonsDown returns the set of buttons that have been
 		// newly pressed in this frame compared to the previous one
-		u64 kDown = padGetButtonsDown(&pad);
+		u64 k_down = padGetButtonsDown(&pad);
 
-		if (kDown & HidNpadButton_Plus)
+		if (k_down & HidNpadButton_Plus)
 			break; // break in order to return to hbmenu
 
 		// Your code goes here

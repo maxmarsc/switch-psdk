@@ -22,6 +22,7 @@ endif()
 set(DEVKITA64 "${DEVKITPRO}/devkitA64")
 set(LIBNX "${DEVKITPRO}/libnx")
 set(PORTLIBS "${DEVKITPRO}/portlibs/switch")
+set(VERSION "15.2.0")
 
 # Add devkitA64 GCC tools to CMake.
 if(WIN32)
@@ -86,3 +87,19 @@ set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -g ${ARCH}" CACHE STRING "ASM flags")
 set(CMAKE_EXE_LINKER_FLAGS "" CACHE STRING "Executable linker flags")
 set(CMAKE_STATIC_LINKER_FLAGS "" CACHE STRING "Library linker flags")
 set(CMAKE_MODULE_LINKER_FLAGS "" CACHE STRING "Module linker flags")
+
+# Include settings
+set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
+    ${DEVKITA64}/aarch64-none-elf/include/c++/${VERSION}
+    ${DEVKITA64}/aarch64-none-elf/include
+    ${DEVKITA64}/lib/gcc/aarch64-none-elf/${VERSION}/include
+    ${DEVKITPRO}/libnx/include
+    ${DEVKITPRO}/pacman/include
+)
+
+set(CMAKE_C_STANDARD_INCLUDE_DIRECTORIES
+    ${DEVKITA64}/aarch64-none-elf/include
+    ${DEVKITA64}/lib/gcc/aarch64-none-elf/${VERSION}/include
+    ${DEVKITPRO}/libnx/include
+    ${DEVKITPRO}/pacman/include
+)

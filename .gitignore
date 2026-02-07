@@ -87,3 +87,8 @@ cmake/cmake-build-debug/
 _build/
 .vs
 .idea/
+
+
+build/
+.cache
+.vscode/
