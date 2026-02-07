@@ -90,11 +90,13 @@ set(CMAKE_MODULE_LINKER_FLAGS "" CACHE STRING "Module linker flags")
 
 # Include settings
 set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
-    ${DEVKITA64}/aarch64-none-elf/include/c++/${VERSION}
-    ${DEVKITA64}/aarch64-none-elf/include
-    ${DEVKITA64}/lib/gcc/aarch64-none-elf/${VERSION}/include
-    ${DEVKITPRO}/libnx/include
-    ${DEVKITPRO}/pacman/include
+  ${DEVKITA64}/aarch64-none-elf/include/c++/${VERSION}
+  ${DEVKITA64}/include
+  ${DEVKITA64}/aarch64-none-elf/include
+  ${DEVKITA64}/aarch64-none-elf/include/c++/${VERSION}/aarch64-none-elf
+  ${DEVKITA64}/lib/gcc/aarch64-none-elf/${VERSION}/include
+  ${DEVKITPRO}/libnx/include
+  ${DEVKITPRO}/pacman/include
 )
 
 set(CMAKE_C_STANDARD_INCLUDE_DIRECTORIES

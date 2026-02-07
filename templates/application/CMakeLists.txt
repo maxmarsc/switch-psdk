@@ -1,7 +1,7 @@
 ## Targets
 
 # First, we want to add the regular ELF target.
-add_executable(my_app source/main.c)
+add_executable(my_app source/main.cpp)
 
 # Next, we need to set the required target properties
 # so CMake can detect the metadata for the application.
