@@ -1,4 +1,4 @@
 add_subdirectory(application)
 add_subdirectory(library)
 add_subdirectory(sysmodule)
-add_subdirectory(sfml_application)
+add_subdirectory(sfml_graphics)
