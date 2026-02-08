@@ -15,7 +15,7 @@ set_target_properties(
 
 # Then, we link the required libraries (libnx) against the executable.
 target_link_libraries(
-  my_sysmodule switch::libnx
+  my_sysmodule switch::libnx arm_neon_clangd_fix
 )
 
 # And finally we can add the actual sysmodule (.nsp) target.

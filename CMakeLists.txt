@@ -20,9 +20,15 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # SwitchTools provide various helper functions for building Switch file formats.
 include(SwitchTools)
+include(SFML)
 
 # Find libnx, which is required by our application.
-find_package(LIBNX REQUIRED)
+find_package(Libnx REQUIRED)
+# Force the variables into the CACHE so SFML sees them as already found
+set(LIBNX_FOUND
+    TRUE
+    CACHE BOOL "Forcing Libnx found for dependencies" FORCE
+)
 
 # ##############################################################################
 # CLANGD
@@ -36,8 +42,7 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
     GIT_SHALLOW ON
   )
   FetchContent_MakeAvailable(arm_neon_clangd_fix)
-
-  link_libraries(arm_neon_clangd_fix)
 endif()
 
 add_subdirectory(templates)
+add_subdirectory(src)

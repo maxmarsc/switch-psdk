@@ -17,7 +17,7 @@ set_target_properties(
 
 # Then, we link the required libraries (libnx) against the executable.
 target_link_libraries(
-  my_app switch::libnx
+  my_app switch::libnx arm_neon_clangd_fix
 )
 
 # Set these variables if you don't want to use an icon or don't want

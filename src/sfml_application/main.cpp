@@ -1,4 +1,5 @@
 // Include the most common headers from the C standard library
+#include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -58,12 +59,12 @@
 // }
 
 int main(int /*argc*/, char* /*argv*/[]) {
-  // Configure our supported input layout: a single player with standard controller styles
-  padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+  // // Configure our supported input layout: a single player with standard controller styles
+  // padConfigureInput(1, HidNpadStyleSet_NpadStandard);
 
-  // Initialize the default gamepad (which reads handheld mode inputs as well as the first connected controller)
-  PadState pad;
-  padInitializeDefault(&pad);
+  // // Initialize the default gamepad (which reads handheld mode inputs as well as the first connected controller)
+  // PadState pad;
+  // padInitializeDefault(&pad);
 
   // 1. Create a window (Switch resolution is 1280x720)
   constexpr auto kWidth  = 1280;
@@ -72,12 +73,16 @@ int main(int /*argc*/, char* /*argv*/[]) {
 
   // 2. Create a simple shape to verify rendering
   sf::CircleShape shape(100.F);
-  shape.setFillColor(sf::Color::Green);
+  shape.setFillColor(sf::Color::Yellow);
   shape.setOrigin(100.F, 100.F);
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
   shape.setPosition(640.F, 360.F);  // Center of the screen
 
   // Drive the loop by the OS status
+  auto colors = std::array{sf::Color::Yellow, sf::Color::Green, sf::Color::Blue,
+                           sf::Color::Red};
+  int color_index = 0;
+
   while (appletMainLoop() && window.isOpen()) {
     sf::Event event{};
     while (window.pollEvent(event)) {
@@ -85,21 +90,22 @@ int main(int /*argc*/, char* /*argv*/[]) {
         window.close();
       }
 
-      // Exit back to hbmenu if '+' is pressed
-      // SFML maps Switch buttons to Joypad buttons
-      if (event.type == sf::Event::KeyPressed) {
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
-        if (event.key.code == sf::Keyboard::Escape ||
-            // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-            sf::Joystick::isButtonPressed(0, 10)) {  // 10 is typically '+'
+      // Change color on ANY button press
+      if (event.type == sf::Event::JoystickButtonPressed) {
+        color_index = (color_index + 1) % 4;
+        shape.setFillColor(colors.at(color_index));
+
+        // Specifically check for PLUS to exit
+        // NOLINTNEXTLINE
+        if (event.joystickButton.button == 10) {
           window.close();
         }
       }
-    }
 
-    window.clear();
-    window.draw(shape);
-    window.display();
+      window.clear();
+      window.draw(shape);
+      window.display();
+    }
   }
 
   return 0;
