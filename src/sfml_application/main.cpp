@@ -16,47 +16,55 @@
 #include <SFML/Window.hpp>
 
 int main(int /*argc*/, char* /*argv*/[]) {
-  // Create a window (Switch resolution is 1280x720)
-  constexpr auto kWidth  = 1280;
-  constexpr auto kHeight = 720;
-  sf::RenderWindow window(sf::VideoMode(kWidth, kHeight), "SFML Switch Test");
+  socketInitializeDefault();
+  nxlinkStdio();
+  {
 
-  // Create a simple shape to verify rendering
-  sf::CircleShape shape(100.F);
-  shape.setFillColor(sf::Color::Yellow);
-  shape.setOrigin(100.F, 100.F);
-  // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
-  shape.setPosition(640.F, 360.F);  // Center of the screen
+    // Create a window (Switch resolution is 1280x720)
+    constexpr auto kWidth  = 1280;
+    constexpr auto kHeight = 720;
+    sf::RenderWindow window(sf::VideoMode(kWidth, kHeight), "SFML Switch Test");
 
-  // Drive the loop by the OS status
-  auto colors = std::array{sf::Color::Yellow, sf::Color::Green, sf::Color::Blue,
-                           sf::Color::Red};
-  int color_index = 0;
+    // Create a simple shape to verify rendering
+    sf::CircleShape shape(100.F);
+    shape.setFillColor(sf::Color::Yellow);
+    shape.setOrigin(100.F, 100.F);
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
+    shape.setPosition(640.F, 360.F);  // Center of the screen
 
-  while (appletMainLoop() && window.isOpen()) {
-    sf::Event event{};
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
-        window.close();
-      }
+    // Drive the loop by the OS status
+    auto colors     = std::array{sf::Color::Yellow, sf::Color::Green,
+                             sf::Color::Blue, sf::Color::Red};
+    int color_index = 0;
 
-      // Change color on ANY button press
-      if (event.type == sf::Event::JoystickButtonPressed) {
-        color_index = (color_index + 1) % 4;
-        shape.setFillColor(colors.at(color_index));
-
-        // Specifically check for PLUS to exit
-        // NOLINTNEXTLINE
-        if (event.joystickButton.button == 10) {
+    while (appletMainLoop() && window.isOpen()) {
+      sf::Event event{};
+      while (window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed) {
           window.close();
         }
-      }
 
-      window.clear();
-      window.draw(shape);
-      window.display();
+        // Change color on ANY button press
+        if (event.type == sf::Event::JoystickButtonPressed) {
+          color_index = (color_index + 1) % 4;
+          printf("Changing color to %d\n", color_index);
+          shape.setFillColor(colors.at(color_index));
+
+          // Specifically check for PLUS to exit
+          // NOLINTNEXTLINE
+          if (event.joystickButton.button == 10) {
+            printf("Closing window...\n");
+            window.close();
+          }
+        }
+
+        window.clear();
+        window.draw(shape);
+        window.display();
+      }
     }
   }
 
+  socketExit();
   return 0;
 }
