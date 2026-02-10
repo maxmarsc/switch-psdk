@@ -21,6 +21,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 # SwitchTools provide various helper functions for building Switch file formats.
 include(SwitchTools)
 include(SFML)
+include(LiteCGSS)
 
 # Find libnx, which is required by our application.
 find_package(Libnx REQUIRED)

@@ -4,12 +4,13 @@
 include(FetchContent)
 
 FetchContent_Declare(
-  switch_sfml
+  SFML
   GIT_REPOSITORY git@github.com:maxmarsc/switch-sfml.git
-  GIT_TAG "switch/fix-fetch-content"
+  GIT_TAG "master"
   GIT_SHALLOW ON
+  OVERRIDE_FIND_PACKAGE
 )
-FetchContent_MakeAvailable(switch_sfml)
+FetchContent_MakeAvailable(SFML)
 
 # ##############################################################################
 # SFML portlibs dependencies

@@ -118,8 +118,9 @@ set(CMAKE_C_FLAGS
     "${CMAKE_C_FLAGS} -g -Wall -O2 -ffunction-sections ${ARCH}"
     CACHE STRING "C flags"
 )
+# -fno-exceptions removed for now since it is used in CGSS
 set(CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} ${CMAKE_C_FLAGS} -fno-rtti -fno-exceptions"
+    "${CMAKE_CXX_FLAGS} ${CMAKE_C_FLAGS} -fno-rtti"
     CACHE STRING "C++ flags"
 )
 set(CMAKE_ASM_FLAGS
