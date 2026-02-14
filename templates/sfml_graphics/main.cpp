@@ -15,11 +15,44 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+#ifndef NDEBUG
+//NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+volatile bool gdb_wait = true;
+
+static int waitForDebugger() {
+  consoleInit(nullptr);
+  padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+  PadState pad;
+  padInitializeDefault(&pad);
+  printf("Waiting for debugger to start or [+] button to exit\n");
+  while (appletMainLoop() && gdb_wait) {
+    padUpdate(&pad);
+    u64 k_down = padGetButtonsDown(&pad);
+
+    if (k_down & HidNpadButton_Plus) {
+      printf("Exiting to hbmenu...\n");
+      consoleUpdate(nullptr);
+      consoleExit(nullptr);
+      return 1;  // break in order to return to hbmenu
+    }
+    consoleUpdate(nullptr);
+    svcSleepThread(100'000'000);  // 100ms
+  }
+  consoleExit(nullptr);
+  return 0;
+}
+#endif
+
 int main(int /*argc*/, char* /*argv*/[]) {
+#ifndef NDEBUG
+  if (waitForDebugger()) {
+    return 0;
+  }
+#endif
   socketInitializeDefault();
   nxlinkStdio();
-  {
 
+  {
     // Create a window (Switch resolution is 1280x720)
     constexpr auto kWidth  = 1280;
     constexpr auto kHeight = 720;

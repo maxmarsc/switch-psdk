@@ -11,7 +11,7 @@ add_executable(
 set_target_properties(
   my_app
   PROPERTIES APP_TITLE "Template Application"
-             APP_AUTHOR "Valentin B."
+             APP_AUTHOR "maxmarsc"
              APP_VERSION "0.1.0"
 )
 

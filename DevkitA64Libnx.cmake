@@ -113,6 +113,8 @@ set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS FALSE)
 
 add_definitions(-DSWITCH -D__SWITCH__)
 
+set(CMAKE_C_FLAGS_DEBUG "-g -O0")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 set(ARCH "-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE")
 set(CMAKE_C_FLAGS
     "${CMAKE_C_FLAGS} -g -Wall -O2 -ffunction-sections ${ARCH}"

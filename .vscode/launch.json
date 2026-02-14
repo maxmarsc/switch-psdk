@@ -1,0 +1,55 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Switch GDB",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${input:selectedElf}",
+      "targetArchitecture": "arm64",
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb-multiarch",
+      "customLaunchSetupCommands": [
+        {
+          "text": "python import os; os.environ['TARGET_NRO'] = '${input:targetNro}'",
+          "description": "Set TARGET_NRO"
+        },
+        {
+          "text": "python os.environ['NX_IP'] = '192.168.1.4'",
+          "description": "Set NX_IP"
+        },
+        {
+          "text": "source ${workspaceFolder}/gdb.py",
+          "description": "Switch debug setup"
+        }
+      ],
+      "launchCompleteCommand": "None",
+      "preLaunchTask": "nxlink",
+    },
+  ],
+  "inputs": [
+    {
+      "id": "targetNro",
+      "type": "command",
+      "command": "extension.commandvariable.file.pickFile",
+      "args": {
+        "include": "**/*.nro",
+        "description": "Select target NRO",
+        "keyRemember": "selectedNro"
+      }
+    },
+    {
+      "id": "selectedElf",
+      "type": "command",
+      "command": "extension.commandvariable.remember",
+      "args": {
+        "key": "selectedNro",
+        "transform": {
+          "find": "\\.nro$",
+          "replace": ""
+        }
+      }
+    }
+  ]
+}

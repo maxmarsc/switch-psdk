@@ -4,6 +4,7 @@
 add_executable(
   cgss_app
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sample_png.cpp
 )
 
 set_target_properties(

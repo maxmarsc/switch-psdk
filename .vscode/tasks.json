@@ -1,0 +1,42 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "nxlink",
+      "type": "shell",
+      "command": "nxlink",
+      "args": [
+        "-a",
+        "192.168.1.4",
+        "${input:targetNro}",
+        "-s"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^$",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".",
+          "endsPattern": "^server active"
+        }
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "targetNro",
+      "type": "command",
+      "command": "extension.commandvariable.file.pickFile",
+      "args": {
+        "include": "**/*.nro",
+        "description": "Select target NRO",
+        "keyRemember": "selectedNro"
+      }
+    },
+  ]
+}
