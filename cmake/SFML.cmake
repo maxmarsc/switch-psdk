@@ -17,10 +17,10 @@ FetchContent_MakeAvailable(SFML)
 # ##############################################################################
 find_package(GLapi REQUIRED)
 find_package(DRMNouveau REQUIRED)
-find_package(GLad REQUIRED)
+# find_package(GLad REQUIRED)
 
 # SFML is missing some dependencies, so we need to link them manually.
 target_link_libraries(
   sfml-window
-  INTERFACE switch::glad switch::glapi switch::drm_nouveau switch::libnx
+  INTERFACE switch::glapi switch::drm_nouveau switch::libnx
 )
