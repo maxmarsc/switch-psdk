@@ -51,6 +51,7 @@ static int waitForDebugger() {
     consoleUpdate(nullptr);
     svcSleepThread(100'000'000);  // 100ms
   }
+  consoleUpdate(nullptr);
   consoleExit(nullptr);
   return 0;
 }
@@ -78,18 +79,24 @@ static void handleEvents(cgss::DisplayWindow& window,
   }
 }
 
-static int viewTest() {
-  printf("Creating cgss::DisplayWindowSettings...\n");
+static int viewTest(bool io_connected) {
+  if (io_connected) {
+    printf("Creating cgss::DisplayWindowSettings...\n");
+  }
   auto settings         = cgss::DisplayWindowSettings{};
   settings.video.scale  = 1;
   settings.visibleMouse = true;
   settings.video.width  = 1280;
   settings.video.height = 720;
   settings.title        = "Playground";
-  printf("Creating cgss::DisplayWindow...\n");
+  if (io_connected) {
+    printf("Creating cgss::DisplayWindow...\n");
+  }
   auto window = cgss::DisplayWindow{};
 
-  printf("Creating window...\n");
+  if (io_connected) {
+    printf("Creating window...\n");
+  }
   const auto window_pos =
       sf::Vector2i{static_cast<int>(cgss::DisplayWindow::DesktopWidth() -
                                     settings.video.width) /
@@ -106,7 +113,9 @@ static int viewTest() {
       cgss::TextureMemorySerializer{{g_sample_png, g_sample_png_length}, false};
   auto texture = cgss::Texture{};
   if (!texture.load(serializer)) {
-    printf("Failed to load bitmap from memory.\n");
+    if (io_connected) {
+      printf("Failed to load bitmap from memory.\n");
+    }
     return 1;
   }
   auto framed_view = viewport.addView<cgss::FramedView>();
@@ -170,11 +179,13 @@ int main(int /*argc*/, char* /*argv*/[]) {
 #endif
 
   socketInitializeDefault();
-  nxlinkStdio();
+  bool connected = nxlinkStdio() >= 0;
 
-  printf("Starting application...\n");
+  if (connected) {
+    printf("Starting application...\n");
+  }
 
-  viewTest();
+  viewTest(connected);
 
   socketExit();
   return 0;

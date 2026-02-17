@@ -115,9 +115,11 @@ add_definitions(-DSWITCH -D__SWITCH__)
 
 set(CMAKE_C_FLAGS_DEBUG "-g -O0")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+set(CMAKE_C_FLAGS_RELEASE "-O2")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 set(ARCH "-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE")
 set(CMAKE_C_FLAGS
-    "${CMAKE_C_FLAGS} -g -Wall -O2 -ffunction-sections ${ARCH}"
+    "${CMAKE_C_FLAGS} -Wall -ffunction-sections ${ARCH}"
     CACHE STRING "C flags"
 )
 # -fno-exceptions removed for now since it is used in CGSS
@@ -126,7 +128,7 @@ set(CMAKE_CXX_FLAGS
     CACHE STRING "C++ flags"
 )
 set(CMAKE_ASM_FLAGS
-    "${CMAKE_ASM_FLAGS} -g ${ARCH}"
+    "${CMAKE_ASM_FLAGS} ${ARCH}"
     CACHE STRING "ASM flags"
 )
 # These flags are purposefully empty to use the default flags when invoking the

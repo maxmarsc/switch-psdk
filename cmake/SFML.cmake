@@ -5,8 +5,8 @@ include(FetchContent)
 
 FetchContent_Declare(
   SFML
-  GIT_REPOSITORY git@github.com:maxmarsc/switch-sfml.git
-  GIT_TAG "master"
+  GIT_REPOSITORY git@github.com:maxmarsc/switch-sfml-opengl-es2.git
+  GIT_TAG "feature/switch_support"
   GIT_SHALLOW ON
   OVERRIDE_FIND_PACKAGE
 )

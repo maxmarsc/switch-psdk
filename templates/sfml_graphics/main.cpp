@@ -24,20 +24,25 @@ static int waitForDebugger() {
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);
   PadState pad;
   padInitializeDefault(&pad);
-  printf("Waiting for debugger to start or [+] button to exit\n");
+  printf("Waiting for debugger or [-] button to start or [+] button to exit\n");
   while (appletMainLoop() && gdb_wait) {
     padUpdate(&pad);
     u64 k_down = padGetButtonsDown(&pad);
+
+    if (k_down & HidNpadButton_Minus) {
+      break;  // break in order to start the application
+    }
 
     if (k_down & HidNpadButton_Plus) {
       printf("Exiting to hbmenu...\n");
       consoleUpdate(nullptr);
       consoleExit(nullptr);
-      return 1;  // break in order to return to hbmenu
+      return 1; 
     }
     consoleUpdate(nullptr);
     svcSleepThread(100'000'000);  // 100ms
   }
+  consoleUpdate(nullptr);
   consoleExit(nullptr);
   return 0;
 }
@@ -50,7 +55,7 @@ int main(int /*argc*/, char* /*argv*/[]) {
   }
 #endif
   socketInitializeDefault();
-  nxlinkStdio();
+  bool connected = nxlinkStdio() >= 0;
 
   {
     // Create a window (Switch resolution is 1280x720)
@@ -80,13 +85,17 @@ int main(int /*argc*/, char* /*argv*/[]) {
         // Change color on ANY button press
         if (event.type == sf::Event::JoystickButtonPressed) {
           color_index = (color_index + 1) % 4;
-          printf("Changing color to %d\n", color_index);
+          if (connected) {
+            printf("Changing color to %d\n", color_index);
+          }
           shape.setFillColor(colors.at(color_index));
 
           // Specifically check for PLUS to exit
           // NOLINTNEXTLINE
           if (event.joystickButton.button == 10) {
-            printf("Closing window...\n");
+            if(connected) {
+              printf("Closing window...\n");
+            }
             window.close();
           }
         }
