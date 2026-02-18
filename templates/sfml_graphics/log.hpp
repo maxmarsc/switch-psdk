@@ -1,12 +1,10 @@
-#include <format>
-#include <optional>
+#if defined(__CLANGD__)
+#include "arm_acle_clangd_fix.h"
+#include "arm_neon_clangd_fix.h"
+#endif
+
 #include <string_view>
-#include <filesystem>
-
 #include <switch.h>
-
-namespace fs = std::filesystem;
-
 
 #pragma once
 
@@ -20,7 +18,7 @@ int enableConsole(PrintConsole* console);
 int disableConsole();
 int enableNxLink(bool redirect_std_out, bool redirect_std_err);
 int disableNxLink();
-int enableFile(const fs::path& log_path);
+int enableFile(std::string_view app_folder);
 int disableFile();
 
 //==============================================================================

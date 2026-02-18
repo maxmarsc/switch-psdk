@@ -9,6 +9,8 @@
 #include <optional>
 #include <string_view>
 
+namespace fs = std::filesystem;
+
 #include <switch.h>
 
 #include "log.hpp"
@@ -16,6 +18,7 @@
 namespace lognx {
 
 constexpr std::string_view kResetSuffix = CONSOLE_RESET;
+constexpr std::string_view kLogFolder = ".lognx";
 
 constexpr std::string_view colorPrefix(Level level) {
   switch (level) {
@@ -37,15 +40,15 @@ constexpr std::string_view colorPrefix(Level level) {
 constexpr std::string_view levelPrefix(Level level) {
   switch (level) {
     case Level::kDebug:
-      return CONSOLE_MAGENTA "[DEBUG] ";
+      return "[DEBUG] ";
     case Level::kInfo:
-      return CONSOLE_WHITE "[INFO] ";
+      return "[INFO] ";
     case Level::kWarning:
-      return CONSOLE_YELLOW "[WARNING]  ";
+      return "[WARNING]  ";
     case Level::kError:
-      return CONSOLE_RED "[ERROR] ";
+      return "[ERROR] ";
     case Level::kFatal:
-      return CONSOLE_RED "[FATAL] ";
+      return "[FATAL] ";
     case Level::kRaw:
       return "";
   }
@@ -130,11 +133,12 @@ class Logger {
     return 0;
   }
 
-  [[nodiscard]] inline int enableFile(const fs::path& log_path) {
+  [[nodiscard]] inline int enableFile(std::string_view app_folder) {
     if (log_file_) {
       return 1;  // File logging already enabled
     }
 
+    fs::path log_path = fs::path(kLogFolder) / app_folder / (getTimeString() + ".log");
     if (ensurePath(log_path)) {
       // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
       log_file_ = fopen(log_path.string().c_str(), "a+");
@@ -166,7 +170,7 @@ class Logger {
     }
 
     logToStdout(text, levelPrefix(Level::kDebug), colorPrefix(Level::kDebug));
-    logToFile(text);
+    logToFile(text, levelPrefix(Level::kDebug));
   }
 
   void info(std::string_view text) {
@@ -175,7 +179,7 @@ class Logger {
     }
 
     logToStdout(text, levelPrefix(Level::kInfo), colorPrefix(Level::kInfo));
-    logToFile(text);
+    logToFile(text, levelPrefix(Level::kInfo));
   }
 
   void warning(std::string_view text) {
@@ -185,7 +189,7 @@ class Logger {
 
     logToStdout(text, levelPrefix(Level::kWarning),
                 colorPrefix(Level::kWarning));
-    logToFile(text);
+    logToFile(text, levelPrefix(Level::kWarning));
   }
 
   void error(std::string_view text) {
@@ -194,7 +198,7 @@ class Logger {
     }
 
     logToStderr(text, levelPrefix(Level::kError), colorPrefix(Level::kError));
-    logToFile(text);
+    logToFile(text, levelPrefix(Level::kError));
   }
 
   void fatal(std::string_view text) {
@@ -203,14 +207,14 @@ class Logger {
     }
 
     logToStderr(text, levelPrefix(Level::kFatal), colorPrefix(Level::kFatal));
-    logToFile(text);
+    logToFile(text, levelPrefix(Level::kFatal));
   }
 
  private:
   //============================================================================
-  void logToFile(std::string_view text) {
+  void logToFile(std::string_view text, std::string_view level_prefix) {
     if (log_file_) {
-      fprintf(log_file_, "%s\n", text.data());
+      fprintf(log_file_, "%s%s\n", level_prefix.data(), text.data());
     }
   }
 
@@ -244,6 +248,24 @@ class Logger {
     return true;
   }
 
+  static std::string getTimeString() {
+    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::tm local_tm{};
+    localtime_r(&now, &local_tm);
+
+    // We use dashes (-) instead of colons (:) because Switch SD cards 
+    // are typically FAT32/exFAT, which forbid colons in filenames.
+    return std::format("{:04}-{:02}-{:02}_{:02}-{:02}-{:02}",
+                       local_tm.tm_year + 1900,
+                       local_tm.tm_mon + 1,
+                       local_tm.tm_mday,
+                       local_tm.tm_hour,
+                       local_tm.tm_min,
+                       local_tm.tm_sec);
+}
+
+  //============================================================================
+
   Level log_level_                  = Level::kWarning;
   PrintConsole* console_            = nullptr;
   int nxLinkFd_                     = -1;
@@ -272,8 +294,8 @@ int disableNxLink() {
   return Logger::getInstance().disableNxLink();
 }
 
-int enableFile(const fs::path& log_path) {
-  return Logger::getInstance().enableFile(log_path);
+int enableFile(std::string_view app_folder) {
+  return Logger::getInstance().enableFile(app_folder);
 }
 
 int disableFile() {
