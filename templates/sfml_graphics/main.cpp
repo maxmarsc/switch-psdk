@@ -1,13 +1,10 @@
 // Include the most common headers from the C standard library
 #include <array>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <format>
 
 #if defined(__CLANGD__)
-#include "arm_acle_clangd_fix.h"
-#include "arm_neon_clangd_fix.h"
+#include "arm_acle_clangd_fix.h"  // IWYU pragma: keep
+#include "arm_neon_clangd_fix.h"  // IWYU pragma: keep
 #endif
 
 // Include the main libnx system header, for Switch development
@@ -19,10 +16,11 @@
 #include <lognx.hpp>
 
 #ifndef NDEBUG
+namespace {
 //NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 volatile bool gdb_wait = true;
 
-static int waitForDebugger() {
+int waitForDebugger() {
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);
   PadState pad;
   padInitializeDefault(&pad);
@@ -44,6 +42,7 @@ static int waitForDebugger() {
   }
   return 0;
 }
+}  // namespace
 #endif
 
 int main(int /*argc*/, char* /*argv*/[]) {

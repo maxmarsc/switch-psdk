@@ -1,12 +1,6 @@
-// Include the most common headers from the C standard library
-#include <array>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-
 #if defined(__CLANGD__)
-#include "arm_acle_clangd_fix.h"
-#include "arm_neon_clangd_fix.h"
+#include "arm_acle_clangd_fix.h"  // IWYU pragma: keep
+#include "arm_neon_clangd_fix.h"  // IWYU pragma: keep
 #endif
 
 // Include the main libnx system header, for Switch development
@@ -26,11 +20,12 @@
 
 #include "sample_png.h"
 
+namespace {
 #ifndef NDEBUG
 //NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 volatile bool gdb_wait = true;
 
-static int waitForDebugger() {
+int waitForDebugger() {
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);
   PadState pad;
   padInitializeDefault(&pad);
@@ -54,8 +49,8 @@ static int waitForDebugger() {
 }
 #endif
 
-static void handleEvents(cgss::DisplayWindow& window,
-                         cgss::DisplayWindowSettings& /*settings*/) {
+void handleEvents(cgss::DisplayWindow& window,
+                  cgss::DisplayWindowSettings& /*settings*/) {
   sf::Event event{};
   while (window.popEvent(event)) {
     switch (event.type) {
@@ -73,7 +68,7 @@ static void handleEvents(cgss::DisplayWindow& window,
   }
 }
 
-static int viewTest() {
+int viewTest() {
 
   lognx::debug("Creating cgss::DisplayWindowSettings...");
 
@@ -150,6 +145,7 @@ static int viewTest() {
 
   return 0;
 }
+}  // namespace
 
 int main(int /*argc*/, char* /*argv*/[]) {
   lognx::setLevel(lognx::Level::kDebug);

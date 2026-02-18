@@ -3,7 +3,7 @@
 # First, we want to add the regular library target with our source files.
 # Libraries cannot be shared, as this is unsupported due to newlib issues.
 add_library(
-  my_lib
+  my_lib STATIC
   ${CMAKE_CURRENT_SOURCE_DIR}/source/templatelib.c
 )
 

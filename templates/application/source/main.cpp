@@ -1,11 +1,9 @@
 // Include the most common headers from the C standard library
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
 
 #if defined(__CLANGD__)
-#include "arm_acle_clangd_fix.h"
-#include "arm_neon_clangd_fix.h"
+#include "arm_acle_clangd_fix.h"  // IWYU pragma: keep
+#include "arm_neon_clangd_fix.h"  // IWYU pragma: keep
 #endif
 
 // Include the main libnx system header, for Switch development

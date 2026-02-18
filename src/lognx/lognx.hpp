@@ -1,6 +1,6 @@
 #if defined(__CLANGD__)
-#include "arm_acle_clangd_fix.h"
-#include "arm_neon_clangd_fix.h"
+#include "arm_acle_clangd_fix.h" // IWYU pragma: keep
+#include "arm_neon_clangd_fix.h" // IWYU pragma: keep
 #endif
 
 #include <string_view>
@@ -10,6 +10,7 @@
 
 namespace lognx {
 
+// NOLINTNEXTLINE
 enum class Level { kDebug, kInfo, kWarning, kError, kFatal, kRaw };
 
 //==============================================================================

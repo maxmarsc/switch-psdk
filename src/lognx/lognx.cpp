@@ -1,6 +1,6 @@
 #if defined(__CLANGD__)
-#include "arm_acle_clangd_fix.h"
-#include "arm_neon_clangd_fix.h"
+#include "arm_acle_clangd_fix.h"  // IWYU pragma: keep
+#include "arm_neon_clangd_fix.h"  // IWYU pragma: keep
 #endif
 
 #include <filesystem>
@@ -18,7 +18,10 @@ namespace fs = std::filesystem;
 namespace lognx {
 
 constexpr std::string_view kResetSuffix = CONSOLE_RESET;
-constexpr std::string_view kLogFolder = ".lognx";
+constexpr std::string_view kEndLine     = "\n";
+constexpr std::string_view kLogFolder   = ".lognx";
+
+namespace {
 
 constexpr std::string_view colorPrefix(Level level) {
   switch (level) {
@@ -55,6 +58,7 @@ constexpr std::string_view levelPrefix(Level level) {
   return "";
 }
 
+}  // namespace
 class Logger {
  private:
   Logger() = default;
@@ -138,7 +142,8 @@ class Logger {
       return 1;  // File logging already enabled
     }
 
-    fs::path log_path = fs::path(kLogFolder) / app_folder / (getTimeString() + ".log");
+    fs::path log_path =
+        fs::path(kLogFolder) / app_folder / (getTimeString() + ".log");
     if (ensurePath(log_path)) {
       // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
       log_file_ = fopen(log_path.string().c_str(), "a+");
@@ -214,6 +219,7 @@ class Logger {
   //============================================================================
   void logToFile(std::string_view text, std::string_view level_prefix) {
     if (log_file_) {
+      // NOLINTNEXTLINE(bugprone-suspicious-stringview-data-usage)
       fprintf(log_file_, "%s%s\n", level_prefix.data(), text.data());
     }
   }
@@ -221,7 +227,7 @@ class Logger {
   void logToStdout(std::string_view text, std::string_view prefix,
                    std::string_view color_prefix) {
     if (console_ || nxLinkFd_ != -1) {
-      std::cout << color_prefix << prefix << text << kResetSuffix << std::endl;
+      std::cout << color_prefix << prefix << text << kResetSuffix << kEndLine;
       if (console_) {
         consoleUpdate(console_);
       }
@@ -231,7 +237,7 @@ class Logger {
   void logToStderr(std::string_view text, std::string_view prefix,
                    std::string_view color_prefix) {
     if (console_ || nxLinkFd_ != -1) {
-      std::cerr << color_prefix << prefix << text << kResetSuffix << std::endl;
+      std::cerr << color_prefix << prefix << text << kResetSuffix << kEndLine;
       if (console_) {
         consoleUpdate(console_);
       }
@@ -249,20 +255,18 @@ class Logger {
   }
 
   static std::string getTimeString() {
-    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto now =
+        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::tm local_tm{};
     localtime_r(&now, &local_tm);
 
-    // We use dashes (-) instead of colons (:) because Switch SD cards 
+    // We use dashes (-) instead of colons (:) because Switch SD cards
     // are typically FAT32/exFAT, which forbid colons in filenames.
     return std::format("{:04}-{:02}-{:02}_{:02}-{:02}-{:02}",
-                       local_tm.tm_year + 1900,
-                       local_tm.tm_mon + 1,
-                       local_tm.tm_mday,
-                       local_tm.tm_hour,
-                       local_tm.tm_min,
+                       local_tm.tm_year + 1900, local_tm.tm_mon + 1,
+                       local_tm.tm_mday, local_tm.tm_hour, local_tm.tm_min,
                        local_tm.tm_sec);
-}
+  }
 
   //============================================================================
 
