@@ -45,5 +45,5 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
   FetchContent_MakeAvailable(arm_neon_clangd_fix)
 endif()
 
-add_subdirectory(templates)
 add_subdirectory(src)
+add_subdirectory(templates)

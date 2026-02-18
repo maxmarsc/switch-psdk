@@ -16,7 +16,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-#include "log.hpp"
+#include "lognx.hpp"
 
 
 #ifndef NDEBUG

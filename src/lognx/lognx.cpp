@@ -13,7 +13,7 @@ namespace fs = std::filesystem;
 
 #include <switch.h>
 
-#include "log.hpp"
+#include "lognx.hpp"
 
 namespace lognx {
 

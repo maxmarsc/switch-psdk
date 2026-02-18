@@ -4,7 +4,6 @@
 add_executable(
   sfml_app
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/log.cpp
 )
 
 set_target_properties(
@@ -16,7 +15,7 @@ set_target_properties(
 
 target_link_libraries(
   sfml_app
-  PRIVATE arm_neon_clangd_fix sfml-graphics sfml-window
+  PRIVATE arm_neon_clangd_fix sfml-graphics sfml-window lognx
 )
 
 add_nro_target(sfml_app)
