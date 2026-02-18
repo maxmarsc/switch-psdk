@@ -4,6 +4,7 @@
 add_executable(
   sfml_app
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/log.cpp
 )
 
 set_target_properties(

@@ -172,13 +172,13 @@ static int viewTest(bool io_connected) {
 }
 
 int main(int /*argc*/, char* /*argv*/[]) {
-#ifndef NDEBUG
+  #ifndef NDEBUG
   if (waitForDebugger()) {
     return 0;
   }
-#endif
-
+  #endif
   socketInitializeDefault();
+
   bool connected = nxlinkStdio() >= 0;
 
   if (connected) {

@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <format>
 
 #if defined(__CLANGD__)
 #include "arm_acle_clangd_fix.h"
@@ -15,16 +16,18 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+#include "log.hpp"
+
+
 #ifndef NDEBUG
 //NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 volatile bool gdb_wait = true;
 
 static int waitForDebugger() {
-  consoleInit(nullptr);
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);
   PadState pad;
   padInitializeDefault(&pad);
-  printf("Waiting for debugger or [-] button to start or [+] button to exit\n");
+  lognx::debug("Waiting for debugger or [-] button to start or [+] button to exit");
   while (appletMainLoop() && gdb_wait) {
     padUpdate(&pad);
     u64 k_down = padGetButtonsDown(&pad);
@@ -34,28 +37,27 @@ static int waitForDebugger() {
     }
 
     if (k_down & HidNpadButton_Plus) {
-      printf("Exiting to hbmenu...\n");
-      consoleUpdate(nullptr);
-      consoleExit(nullptr);
-      return 1; 
+      lognx::debug("Exiting to hbmenu...");
+      return 1;
     }
-    consoleUpdate(nullptr);
     svcSleepThread(100'000'000);  // 100ms
   }
-  consoleUpdate(nullptr);
-  consoleExit(nullptr);
   return 0;
 }
 #endif
 
 int main(int /*argc*/, char* /*argv*/[]) {
+  lognx::setLevel(lognx::Level::kDebug);
 #ifndef NDEBUG
+  if (lognx::enableConsole(nullptr)) {
+    return 1;
+  }
   if (waitForDebugger()) {
     return 0;
   }
+  lognx::disableConsole();
 #endif
-  socketInitializeDefault();
-  bool connected = nxlinkStdio() >= 0;
+  lognx::enableNxLink(true, true);
 
   {
     // Create a window (Switch resolution is 1280x720)
@@ -85,17 +87,13 @@ int main(int /*argc*/, char* /*argv*/[]) {
         // Change color on ANY button press
         if (event.type == sf::Event::JoystickButtonPressed) {
           color_index = (color_index + 1) % 4;
-          if (connected) {
-            printf("Changing color to %d\n", color_index);
-          }
+          lognx::debug(std::format("Changing color to {}", color_index));
           shape.setFillColor(colors.at(color_index));
 
           // Specifically check for PLUS to exit
-          // NOLINTNEXTLINE
+          // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
           if (event.joystickButton.button == 10) {
-            if(connected) {
-              printf("Closing window...\n");
-            }
+            lognx::info("Closing window...");
             window.close();
           }
         }
@@ -107,6 +105,6 @@ int main(int /*argc*/, char* /*argv*/[]) {
     }
   }
 
-  socketExit();
+  // lognx::disableNxLink();
   return 0;
 }
