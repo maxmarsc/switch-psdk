@@ -69,15 +69,14 @@ void handleEvents(cgss::DisplayWindow& window,
 }
 
 int viewTest() {
-
   lognx::debug("Creating cgss::DisplayWindowSettings...");
-
   auto settings         = cgss::DisplayWindowSettings{};
   settings.video.scale  = 1;
   settings.visibleMouse = true;
   settings.video.width  = 1280;
   settings.video.height = 720;
   settings.title        = "Playground";
+
   lognx::debug("Creating cgss::DisplayWindow...");
   auto window = cgss::DisplayWindow{};
 

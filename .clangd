@@ -1,6 +1,8 @@
 ---
 If:
-  PathMatch: extras/clangd/llvm_arm_neon.h
+  PathMatch: 
+    - arm_neon_clangd_fix.h
+    - arm_acle_clangd_fix.h
 Diagnostics:
   Suppress: '*'
 
