@@ -6,5 +6,12 @@ Diagnostics:
 
 ---
 CompileFlags:
-  Add: [-D__CLANGD__, --target=aarch64-none-elf]
-  Remove: [-mtp=soft, -march=armv8-a+crc+crypto, "-fmodule-mapper=*", "-fdeps-format=*", "-fmodules-ts"]
+  Add: 
+    - "-D__CLANGD__"
+    - "--target=aarch64-none-elf"
+  Remove: 
+    - "-mtp=soft"
+    - "-march=armv8-a+crc+crypto"
+    - "-fmodule-mapper=*"
+    - "-fdeps-format=*"
+    - "-fmodules-ts"

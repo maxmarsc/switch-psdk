@@ -16,8 +16,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-#include "lognx.hpp"
-
+#include <lognx.hpp>
 
 #ifndef NDEBUG
 //NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
@@ -27,7 +26,8 @@ static int waitForDebugger() {
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);
   PadState pad;
   padInitializeDefault(&pad);
-  lognx::debug("Waiting for debugger or [-] button to start or [+] button to exit");
+  lognx::debug(
+      "Waiting for debugger or [-] button to start or [+] button to exit");
   while (appletMainLoop() && gdb_wait) {
     padUpdate(&pad);
     u64 k_down = padGetButtonsDown(&pad);

@@ -16,7 +16,7 @@ set_target_properties(
 
 target_link_libraries(
   cgss_app
-  PRIVATE arm_neon_clangd_fix LiteCGSS_engine
+  PRIVATE arm_neon_clangd_fix LiteCGSS_engine lognx
 )
 
 add_nro_target(cgss_app)

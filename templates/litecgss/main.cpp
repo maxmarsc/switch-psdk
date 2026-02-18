@@ -21,6 +21,8 @@
 #include <LiteCGSS/Graphics/Texture.h>
 #include <LiteCGSS/Views/DisplayWindow.h>
 #include <LiteCGSS/Views/Viewport.h>
+// lognx
+#include <lognx.hpp>
 
 #include "sample_png.h"
 
@@ -29,11 +31,11 @@
 volatile bool gdb_wait = true;
 
 static int waitForDebugger() {
-  consoleInit(nullptr);
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);
   PadState pad;
   padInitializeDefault(&pad);
-  printf("Waiting for debugger or [-] button to start or [+] button to exit\n");
+  lognx::debug(
+      "Waiting for debugger or [-] button to start or [+] button to exit");
   while (appletMainLoop() && gdb_wait) {
     padUpdate(&pad);
     u64 k_down = padGetButtonsDown(&pad);
@@ -43,22 +45,14 @@ static int waitForDebugger() {
     }
 
     if (k_down & HidNpadButton_Plus) {
-      printf("Exiting to hbmenu...\n");
-      consoleUpdate(nullptr);
-      consoleExit(nullptr);
-      return 1; 
+      lognx::debug("Exiting to hbmenu...");
+      return 1;
     }
-    consoleUpdate(nullptr);
     svcSleepThread(100'000'000);  // 100ms
   }
-  consoleUpdate(nullptr);
-  consoleExit(nullptr);
   return 0;
 }
 #endif
-
-// static bool g_dispose_view = false;
-// static sf::Vector2i g_window_position{100, 100};
 
 static void handleEvents(cgss::DisplayWindow& window,
                          cgss::DisplayWindowSettings& /*settings*/) {
@@ -68,7 +62,7 @@ static void handleEvents(cgss::DisplayWindow& window,
       case sf::Event::JoystickButtonPressed: {
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
         if (event.joystickButton.button == 10) {
-          printf("Closing window...\n");
+          lognx::info("Closing window...");
           window.stop();
         }
         break;
@@ -79,24 +73,20 @@ static void handleEvents(cgss::DisplayWindow& window,
   }
 }
 
-static int viewTest(bool io_connected) {
-  if (io_connected) {
-    printf("Creating cgss::DisplayWindowSettings...\n");
-  }
+static int viewTest() {
+
+  lognx::debug("Creating cgss::DisplayWindowSettings...");
+
   auto settings         = cgss::DisplayWindowSettings{};
   settings.video.scale  = 1;
   settings.visibleMouse = true;
   settings.video.width  = 1280;
   settings.video.height = 720;
   settings.title        = "Playground";
-  if (io_connected) {
-    printf("Creating cgss::DisplayWindow...\n");
-  }
+  lognx::debug("Creating cgss::DisplayWindow...");
   auto window = cgss::DisplayWindow{};
 
-  if (io_connected) {
-    printf("Creating window...\n");
-  }
+  lognx::debug("Creating window...");
   const auto window_pos =
       sf::Vector2i{static_cast<int>(cgss::DisplayWindow::DesktopWidth() -
                                     settings.video.width) /
@@ -113,9 +103,7 @@ static int viewTest(bool io_connected) {
       cgss::TextureMemorySerializer{{g_sample_png, g_sample_png_length}, false};
   auto texture = cgss::Texture{};
   if (!texture.load(serializer)) {
-    if (io_connected) {
-      printf("Failed to load bitmap from memory.\n");
-    }
+    lognx::error("Failed to load bitmap from memory.");
     return 1;
   }
   auto framed_view = viewport.addView<cgss::FramedView>();
@@ -153,40 +141,33 @@ static int viewTest(bool io_connected) {
 
   viewport.move(50, 50);
 
+  while (appletMainLoop() && window.isOpen()) {
+    window.draw();
+    handleEvents(window, settings);
 
-
-    while (appletMainLoop() && window.isOpen()) {
-      window.draw();
-      handleEvents(window, settings);
-
-      sprite.setAngle(sprite.getAngle() + 1.F);
-
-      // if (g_dispose_view) {
-      //   framed_view.detach();
-      // }
-
-    }
-  
+    sprite.setAngle(sprite.getAngle() + 1.F);
+  }
 
   return 0;
 }
 
 int main(int /*argc*/, char* /*argv*/[]) {
-  #ifndef NDEBUG
+  lognx::setLevel(lognx::Level::kDebug);
+  lognx::enableFile("litecgss_app");
+#ifndef NDEBUG
+  if (lognx::enableConsole(nullptr)) {
+    return 1;
+  }
   if (waitForDebugger()) {
     return 0;
   }
-  #endif
-  socketInitializeDefault();
+  lognx::disableConsole();
+#endif
+  lognx::enableNxLink(true, true);
+  lognx::info("Starting application...");
 
-  bool connected = nxlinkStdio() >= 0;
+  viewTest();
 
-  if (connected) {
-    printf("Starting application...\n");
-  }
-
-  viewTest(connected);
-
-  socketExit();
+  lognx::disableNxLink();
   return 0;
 }
