@@ -1,17 +1,16 @@
 #if defined(__CLANGD__)
-#include "arm_acle_clangd_fix.h" // IWYU pragma: keep
-#include "arm_neon_clangd_fix.h" // IWYU pragma: keep
+#include "arm_acle_clangd_fix.h"  // IWYU pragma: keep
+#include "arm_neon_clangd_fix.h"  // IWYU pragma: keep
 #endif
 
-#include <string_view>
 #include <switch.h>
+#include <string_view>
 
 #pragma once
 
 namespace lognx {
 
-// NOLINTNEXTLINE
-enum class Level { kDebug, kInfo, kWarning, kError, kFatal, kRaw };
+enum class Level : int8_t { kDebug, kInfo, kWarning, kError, kFatal, kRaw };
 
 //==============================================================================
 void setLevel(Level level);
