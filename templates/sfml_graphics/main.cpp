@@ -48,6 +48,7 @@ static int waitForDebugger() {
 
 int main(int /*argc*/, char* /*argv*/[]) {
   lognx::setLevel(lognx::Level::kDebug);
+  lognx::enableFile(".logs/sfml_app.log");
 #ifndef NDEBUG
   if (lognx::enableConsole(nullptr)) {
     return 1;
@@ -105,6 +106,5 @@ int main(int /*argc*/, char* /*argv*/[]) {
     }
   }
 
-  // lognx::disableNxLink();
   return 0;
 }
