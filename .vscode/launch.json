@@ -42,13 +42,11 @@
     {
       "id": "selectedElf",
       "type": "command",
-      "command": "extension.commandvariable.remember",
+      "command": "extension.commandvariable.transform",
       "args": {
-        "key": "selectedNro",
-        "transform": {
-          "find": "\\.nro$",
-          "replace": ""
-        }
+        "text": "${input:targetNro}",
+        "find": "\\.nro$",
+        "replace": ""
       }
     }
   ]

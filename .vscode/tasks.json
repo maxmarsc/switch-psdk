@@ -31,12 +31,10 @@
     {
       "id": "targetNro",
       "type": "command",
-      "command": "extension.commandvariable.file.pickFile",
+      "command": "extension.commandvariable.remember",
       "args": {
-        "include": "**/*.nro",
-        "description": "Select target NRO",
-        "keyRemember": "selectedNro"
+        "key": "selectedNro"
       }
-    },
+    }
   ]
 }
