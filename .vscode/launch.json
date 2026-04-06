@@ -16,7 +16,7 @@
           "description": "Set TARGET_NRO"
         },
         {
-          "text": "python os.environ['NX_IP'] = '192.168.1.4'",
+          "text": "python os.environ['NX_IP'] = '192.168.1.3'",
           "description": "Set NX_IP"
         },
         {

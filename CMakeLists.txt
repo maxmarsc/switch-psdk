@@ -1,13 +1,13 @@
 # Declare project
 cmake_minimum_required(VERSION 3.28)
-project(switch-psdk)
+project(switch-psdk LANGUAGES C CXX ASM)
 
 # We set the C standard to 11.
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Disable C++20 module dependency scanning
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # CMake modules
@@ -22,9 +22,11 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(SwitchTools)
 include(SFML)
 include(LiteCGSS)
+include(Ruby)
 
 # Find libnx, which is required by our application.
 find_package(Libnx REQUIRED)
+
 # Force the variables into the CACHE so SFML sees them as already found
 set(LIBNX_FOUND
     TRUE
