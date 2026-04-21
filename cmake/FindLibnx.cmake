@@ -30,7 +30,6 @@ endif()
 
 set(LIBNX_PATHS ${LIBNX} $ENV{LIBNX} ${DEVKITPRO}/libnx libnx)
 
-message(STATUS "foudn libnx at ${LIBNX_PATHS}")
 find_path(
   LIBNX_INCLUDE_DIR switch.h
   PATHS ${LIBNX_PATHS}

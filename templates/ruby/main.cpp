@@ -17,46 +17,15 @@
 extern bool rb_free_at_exit;
 
 namespace {
-// Function to print a single level of a directory
-void printRomfsDir(const std::string& path) {
-  auto* dir = opendir(path.c_str());
-  if (!dir) {
-    printf("[Error opening dir: %s]\n", path.c_str());
-    return;
-  }
-
-  struct dirent* entry = nullptr;
-  while ((entry = readdir(dir)) != nullptr) {
-    std::string name = entry->d_name;
-
-    // Skip current and parent directory markers
-    if (name == "." || name == "..") {
-      continue;
-    }
-
-    std::string full_path = path + (path.back() == '/' ? "" : "/") + name;
-
-    // Check if it's a directory or a file
-    struct stat st;
-    if (stat(full_path.c_str(), &st) == 0 && S_ISDIR(st.st_mode)) {
-      printf("[DIR]  %s\n", name.c_str());
-    } else {
-      printf("[FILE] %s\n", name.c_str());
-    }
-  }
-  closedir(dir);
-}
-
 int rubyWork() {
   // Add pure-ruby load paths
   printf("Setting up load path...\n");
   consoleUpdate(nullptr);
   {
     int load_path_state = 0;
-    rb_eval_string_protect("$LOAD_PATH.unshift('romfs:/ruby/3.4.0')",
+    rb_eval_string_protect("$LOAD_PATH.unshift('" RUBY_STDLIB_DIR
+                           "', '" RUBY_STDLIB_DIR "/aarch64-elf')",
                            &load_path_state);
-    // rb_eval_string_protect("$LOAD_PATH.unshift('" RUBY_STDLIB_DIR "')",
-    //                        &load_path_state);
     if (load_path_state != 0) {
       VALUE err           = rb_errinfo();
       VALUE inspected_err = rb_inspect(err);
@@ -127,16 +96,15 @@ int main(int argc, char** argv) {
 
   // Setup ruby
   printf("Initializing Ruby...\n");
-  // NOLINTNEXTLINE
-  char* ruby_opts[] = {argv[0], "-e", ""};
+  // NOLINTBEGIN(cppcoreguidelines-pro-type-const-cast)
+  std::array<char*, 3> ruby_opts{*argv, const_cast<char*>("-e"),
+                                 const_cast<char*>("")};
+  // NOLINTEND(cppcoreguidelines-pro-type-const-cast)
   ruby_sysinit(&argc, &argv);
   RUBY_INIT_STACK;
   ruby_init();
   // Load the built-in features & extensions
-  // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-  ruby_options(3, ruby_opts);
-
-  printRomfsDir("romfs:/");
+  ruby_options(3, ruby_opts.data());
 
   // don't forget to set this flag to make sure ruby_cleanup() clean everything up
   rb_free_at_exit = true;

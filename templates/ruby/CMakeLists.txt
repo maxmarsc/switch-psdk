@@ -36,7 +36,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/romfs
 )
 
 # Then add the ruby stdlib to the ROMFS
-ruby_switch_setup_romfs(ruby_app ${CMAKE_CURRENT_SOURCE_DIR}/romfs)
+ruby_switch_setup_romfs(ruby_app ${CMAKE_CURRENT_BINARY_DIR}/romfs)
 
 # ##############################################################################
 # Final setup
