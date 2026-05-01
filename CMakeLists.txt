@@ -23,6 +23,7 @@ include(SwitchTools)
 include(SFML)
 include(LiteCGSS)
 include(Ruby)
+include(LiteRGSS2)
 
 # Find libnx, which is required by our application.
 find_package(Libnx REQUIRED)

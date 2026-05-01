@@ -21,6 +21,7 @@ if(DRMNouveau_FOUND AND NOT TARGET switch::drm_nouveau)
   set_target_properties(
     switch::drm_nouveau PROPERTIES IMPORTED_LOCATION "${DRMNouveau_LIBRARY}"
   )
+  target_link_libraries(switch::drm_nouveau INTERFACE switch::libnx)
 endif()
 
 mark_as_advanced(DRMNouveau_LIBRARY)
