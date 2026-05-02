@@ -20,10 +20,13 @@
 
 #include "sample_png.h"
 
+#ifndef NDEBUG
+//NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables, misc-use-internal-linkage)
+volatile bool gdb_wait = true;
+#endif
+
 namespace {
 #ifndef NDEBUG
-//NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-volatile bool gdb_wait = true;
 
 int waitForDebugger() {
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);

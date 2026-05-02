@@ -19,6 +19,7 @@ target_link_libraries(
   PRIVATE arm_neon_clangd_fix 
   LiteRGSS2
   Ruby::ruby
+  lognx
 )
 
 target_compile_definitions(

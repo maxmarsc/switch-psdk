@@ -3,6 +3,7 @@
 #include "arm_neon_clangd_fix.h"  // IWYU pragma: keep
 #endif
 
+#include <sys/iosupport.h>
 #include <filesystem>
 #include <format>
 #include <iostream>
@@ -22,6 +23,17 @@ constexpr std::string_view kEndLine     = "\n";
 constexpr std::string_view kLogFolder   = ".lognx";
 
 namespace {
+
+ssize_t nullWrite(struct _reent* /*unused*/, void* /*unused*/,
+                  const char* /*unused*/, size_t n) {
+  return static_cast<ssize_t>(n);
+}
+
+const devoptab_t kNullDevoptab = {
+    .name       = "lognx_null",
+    .structSize = 1,
+    .write_r    = nullWrite,
+};
 
 constexpr std::string_view colorPrefix(Level level) {
   switch (level) {
@@ -97,8 +109,16 @@ class Logger {
     if (console_) {
       return 1;  // Console already enabled
     }
-
     console_ = consoleInit(console);
+
+    // Capture the devoptab libnx installed (only on the very first call)
+    if (!console_devoptab_) {
+      console_devoptab_ = devoptab_list[STD_OUT];
+    }
+    // Re-point the slot in case we previously routed it to null
+    devoptab_list[STD_OUT] = console_devoptab_;
+    devoptab_list[STD_ERR] = console_devoptab_;
+
     return 0;
   }
 
@@ -109,6 +129,10 @@ class Logger {
 
     consoleExit(console_);
     console_ = nullptr;
+    if (nxLinkFd_ == -1) {
+      devoptab_list[STD_OUT] = &kNullDevoptab;
+      devoptab_list[STD_ERR] = &kNullDevoptab;
+    }
     return 0;
   }
 
@@ -123,7 +147,12 @@ class Logger {
     }
 
     nxLinkFd_ = nxlinkConnectToHost(redirect_std_out, redirect_std_err);
-    return nxLinkFd_ < 0 ? 1 : 0;
+    if (nxLinkFd_ < 0) {
+      socketExit();
+      nxLinkFd_ = -1;
+      return 1;
+    }
+    return 0;
   }
 
   [[nodiscard]] inline int disableNxLink() {
@@ -134,6 +163,11 @@ class Logger {
     socketExit();
 
     nxLinkFd_ = -1;
+
+    if (!console_) {
+      devoptab_list[STD_OUT] = &kNullDevoptab;
+      devoptab_list[STD_ERR] = &kNullDevoptab;
+    }
     return 0;
   }
 
@@ -270,11 +304,12 @@ class Logger {
 
   //============================================================================
 
-  Level log_level_                  = Level::kWarning;
-  PrintConsole* console_            = nullptr;
-  int nxLinkFd_                     = -1;
-  FILE* log_file_                   = nullptr;
-  std::optional<fs::path> log_path_ = std::nullopt;
+  Level log_level_                    = Level::kWarning;
+  PrintConsole* console_              = nullptr;
+  int nxLinkFd_                       = -1;
+  FILE* log_file_                     = nullptr;
+  std::optional<fs::path> log_path_   = std::nullopt;
+  const devoptab_t* console_devoptab_ = nullptr;
 };
 
 //==============================================================================

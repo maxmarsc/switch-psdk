@@ -1,8 +1,7 @@
 // Include the most common headers from the C standard library
 #include <dirent.h>
 #include <array>
-#include <cstdio>
-#include <string>
+#include <format>
 
 #if defined(__CLANGD__)
 #include "arm_acle_clangd_fix.h"  // IWYU pragma: keep
@@ -11,8 +10,15 @@
 
 // Include the main libnx system header, for Switch development
 #include <switch.h>
+// lognx
+#include <lognx.hpp>
 
-#include "ruby.h"
+#ifndef NDEBUG
+#define RUBY_DEBUG 1
+//NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables, misc-use-internal-linkage)
+volatile bool gdb_wait = true;
+#endif
+#include "ruby.h"  // IWYU pragma: keep
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 extern bool rb_free_at_exit;
 
@@ -21,11 +27,38 @@ extern "C" {
 void Init_LiteRGSS();
 }
 
+#include <sys/iosupport.h>
+
 namespace {
+
+#ifndef NDEBUG
+int waitForDebugger() {
+  padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+  PadState pad;
+  padInitializeDefault(&pad);
+  lognx::debug(
+      "Waiting for debugger or [-] button to start or [+] button to exit");
+  while (appletMainLoop() && gdb_wait) {
+    padUpdate(&pad);
+    u64 k_down = padGetButtonsDown(&pad);
+
+    if (k_down & HidNpadButton_Minus) {
+      break;  // break in order to start the application
+    }
+
+    if (k_down & HidNpadButton_Plus) {
+      lognx::debug("Exiting to hbmenu...");
+      return 1;
+    }
+    svcSleepThread(100'000'000);  // 100ms
+  }
+  return 0;
+}
+#endif
+
 int rubyWork() {
   // Add pure-ruby load paths
-  printf("Setting up load path...\n");
-  consoleUpdate(nullptr);
+  lognx::info("Setting up load path...");
   {
     int load_path_state = 0;
     rb_eval_string_protect("$LOAD_PATH.unshift('" RUBY_STDLIB_DIR
@@ -34,17 +67,15 @@ int rubyWork() {
     if (load_path_state != 0) {
       VALUE err           = rb_errinfo();
       VALUE inspected_err = rb_inspect(err);
-      printf("%s[ERROR]%s Failed to set up load path: %s\n", CONSOLE_RED,
-             CONSOLE_RESET, StringValueCStr(inspected_err));
-      consoleUpdate(nullptr);
+      lognx::error(std::format("Failed to set up load path: {}",
+                               StringValueCStr(inspected_err)));
       rb_set_errinfo(Qnil);
       return 1;
     }
   }
 
   // Initialize temp dir
-  printf("Setting up temp dir...\n");
-  consoleUpdate(nullptr);
+  lognx::info("Setting up temp dir...");
   {
     int tmpdir_state = 0;
     rb_eval_string_protect(
@@ -52,25 +83,25 @@ int rubyWork() {
     if (tmpdir_state != 0) {
       VALUE err           = rb_errinfo();
       VALUE inspected_err = rb_inspect(err);
-      printf("%s[ERROR]%s Failed to set up temp dir: %s\n", CONSOLE_RED,
-             CONSOLE_RESET, StringValueCStr(inspected_err));
-      consoleUpdate(nullptr);
+      lognx::error(std::format("Failed to set up temp dir: {}",
+                               StringValueCStr(inspected_err)));
       rb_set_errinfo(Qnil);
       return 1;
     }
   }
 
   // Run the ruby code
-  printf("Running ruby app...\n");
-  consoleUpdate(nullptr);
+  lognx::info("Running ruby app...");
+  svcSleepThread(1000000000);
+  lognx::disableConsole();
   int state = 0;
   rb_load_protect(rb_str_new_cstr(RUBY_MAIN_APP), 0, &state);
   if (state != 0) {
     VALUE err           = rb_errinfo();
     VALUE inspected_err = rb_inspect(err);
-    printf("%s[ERROR]%s Failed to load main ruby app: %s\n", CONSOLE_RED,
-           CONSOLE_RESET, StringValueCStr(inspected_err));
-    consoleUpdate(nullptr);
+    lognx::enableConsole(nullptr);
+    lognx::error(StringValueCStr(inspected_err));
+    lognx::disableConsole();
     rb_set_errinfo(Qnil);
     return 1;
   }
@@ -81,26 +112,33 @@ int rubyWork() {
 
 int main(int argc, char** argv) {
   // initialize console and socket for nxlink
-  consoleInit(nullptr);
-  socketInitializeDefault();
-  nxlinkStdio();
+  lognx::setLevel(lognx::Level::kDebug);
+  lognx::enableFile("litergss_app");
+  if (lognx::enableConsole(nullptr)) {
+    return 1;
+  }
+  lognx::enableNxLink(true, true);
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);
   PadState pad;
   padInitializeDefault(&pad);
 
+#ifndef NDEBUG
+  if (waitForDebugger()) {
+    return 0;
+  }
+#endif
+
   auto rc = romfsInit();
   if (R_FAILED(rc)) {
-    printf("romfsInit: %08X\n", rc);
-    consoleUpdate(nullptr);
-    socketExit();
-    consoleExit(nullptr);
+    lognx::error(std::format("romfsInit: {}", rc));
+    lognx::disableConsole();
+    lognx::disableNxLink();
     return 1;
   }
-  printf("romfs Init Successful!\n");
-  consoleUpdate(nullptr);
+  lognx::info("romfs Init Successful!");
 
   // Setup ruby
-  printf("Initializing Ruby...\n");
+  lognx::info("Initializing Ruby...");
   // NOLINTBEGIN(cppcoreguidelines-pro-type-const-cast)
   std::array<char*, 3> ruby_opts{*argv, const_cast<char*>("-e"),
                                  const_cast<char*>("")};
@@ -111,6 +149,7 @@ int main(int argc, char** argv) {
   // Load the built-in features & extensions
   ruby_options(3, ruby_opts.data());
   Init_LiteRGSS();
+  rb_provide("LiteRGSS");
 
   // don't forget to set this flag to make sure ruby_cleanup() clean everything up
   rb_free_at_exit = true;
@@ -119,12 +158,11 @@ int main(int argc, char** argv) {
   int result = rubyWork();
   ruby_cleanup(0);
 
-  printf("Waiting for [+] button to exit\n");
-  consoleUpdate(nullptr);
+  lognx::enableConsole(nullptr);
+  lognx::info("Waiting for [+] button to exit");
 
   while (appletMainLoop()) {
     svcSleepThread(100000000);  // 100ms
-    consoleUpdate(nullptr);
     padUpdate(&pad);
     if (padGetButtonsDown(&pad) & HidNpadButton_Plus) {
       break;
@@ -132,7 +170,7 @@ int main(int argc, char** argv) {
   }
 
   romfsExit();
-  socketExit();
-  consoleExit(nullptr);
+  lognx::disableConsole();
+  lognx::disableNxLink();
   return result;
 }
