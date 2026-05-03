@@ -50,11 +50,12 @@ set(_romfs_stamp ${CMAKE_CURRENT_BINARY_DIR}/romfs/.base_copied)
 
 add_custom_command(
     OUTPUT ${_romfs_stamp}
+    COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/romfs"
     COMMAND ${CMAKE_COMMAND} -E copy_directory 
             "${CMAKE_CURRENT_SOURCE_DIR}/romfs"
             "${CMAKE_CURRENT_BINARY_DIR}/romfs"
     COMMAND ${CMAKE_COMMAND} -E touch "${_romfs_stamp}"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/romfs"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/romfs/ruby/app/main.rb" # re-run if main.rb changes
     COMMENT "Syncing base romfs"
 )
 

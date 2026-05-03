@@ -71,9 +71,25 @@ window.on_joystick_moved = proc do |id, axis, pos|
   ax_y = pos if axis == 1
 end
 
+window.on_touch_began = proc do |finger_id, x, y|
+  puts "touch begin finger=#{finger_id} x=#{x} y=#{y}"
+  sprite.x = x
+  sprite.y = y
+end
+
+window.on_touch_moved = proc do |finger_id, x, y|
+  puts "touch move  finger=#{finger_id} x=#{x} y=#{y}"
+  sprite.x = x
+  sprite.y = y
+end
+
+window.on_touch_ended = proc do |finger_id, x, y|
+  puts "touch end   finger=#{finger_id} x=#{x} y=#{y}"
+end
+
 while running
-  sprite.x += ax_x * 0.005
-  sprite.y += ax_y * 0.005
+  sprite.x += ax_x * 0.05
+  sprite.y -= ax_y * 0.05
   sprite.angle = (sprite.angle + 5) % 360 if rotating
   window.update
 end
