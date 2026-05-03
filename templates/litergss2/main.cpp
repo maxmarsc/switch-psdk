@@ -150,6 +150,8 @@ int main(int argc, char** argv) {
   ruby_options(3, ruby_opts.data());
   Init_LiteRGSS();
   rb_provide("LiteRGSS");
+  // Disable buffering for stdout and stderr
+  rb_eval_string("STDOUT.sync = true; STDERR.sync = true");
 
   // don't forget to set this flag to make sure ruby_cleanup() clean everything up
   rb_free_at_exit = true;

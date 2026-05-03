@@ -33,13 +33,40 @@ target_compile_definitions(
 # ##############################################################################
 # ROMFS setup
 # ##############################################################################
-# First copy the source ROMFS to the build dir
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/romfs
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+# ~~~
+# # First copy the source ROMFS to the build dir
+# file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/romfs
+#     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+# )
+
+# # Then add the ruby stdlib to the ROMFS
+# ruby_switch_setup_romfs(litergss2_app ${CMAKE_CURRENT_BINARY_DIR}/romfs)
+# ~~~
+
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/romfs")
+
+# Create a stamp file to track romfs sync
+set(_romfs_stamp ${CMAKE_CURRENT_BINARY_DIR}/romfs/.base_copied)
+
+add_custom_command(
+    OUTPUT ${_romfs_stamp}
+    COMMAND ${CMAKE_COMMAND} -E copy_directory 
+            "${CMAKE_CURRENT_SOURCE_DIR}/romfs"
+            "${CMAKE_CURRENT_BINARY_DIR}/romfs"
+    COMMAND ${CMAKE_COMMAND} -E touch "${_romfs_stamp}"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/romfs"
+    COMMENT "Syncing base romfs"
 )
 
-# Then add the ruby stdlib to the ROMFS
+add_custom_target(litergss2_app_base_romfs
+    DEPENDS ${_romfs_stamp}
+)
+
+# Now setup ruby stdlib - it will layer on top
 ruby_switch_setup_romfs(litergss2_app ${CMAKE_CURRENT_BINARY_DIR}/romfs)
+
+# Make ruby stdlib sync wait for base romfs
+add_dependencies(litergss2_app_ruby_stdlib_romfs litergss2_app_base_romfs)
 
 # ##############################################################################
 # Final setup
