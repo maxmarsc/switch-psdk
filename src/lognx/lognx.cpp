@@ -203,6 +203,11 @@ class Logger {
   }
   //============================================================================
 
+  void log(std::string_view text) {
+    logToStdout(text, "", "");
+    logToFile(text, "");
+  }
+
   void debug(std::string_view text) {
     if (log_level_ > Level::kDebug) {
       return;
@@ -342,6 +347,10 @@ int disableFile() {
 }
 
 //==============================================================================
+void log(std::string_view text) {
+  Logger::getInstance().log(text);
+}
+
 void debug(std::string_view text) {
   Logger::getInstance().debug(text);
 }

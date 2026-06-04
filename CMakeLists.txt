@@ -35,6 +35,11 @@ set(LIBNX_FOUND
     CACHE BOOL "Forcing Libnx found for dependencies" FORCE
 )
 
+set(COMPILED_DEMO_FOLDER "" CACHE PATH "Path to the compiled demo")
+if (NOT COMPILED_DEMO_FOLDER)
+  message(FATAL_ERROR "COMPILED_DEMO_FOLDER is not set")
+endif()
+
 # ##############################################################################
 # CLANGD
 # ##############################################################################

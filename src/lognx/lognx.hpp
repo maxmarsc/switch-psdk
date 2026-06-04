@@ -22,6 +22,7 @@ int enableFile(std::string_view app_folder);
 int disableFile();
 
 //==============================================================================
+void log(std::string_view text);
 void debug(std::string_view text);
 void info(std::string_view text);
 void warning(std::string_view text);
