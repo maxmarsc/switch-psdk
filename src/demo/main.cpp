@@ -80,6 +80,7 @@ int rubyWork() {
   // Initialize temp dir
   lognx::info("Setting up temp dir...");
   {
+    mkdir(RUBY_TMP_DIR, 0755);
     int tmpdir_state = 0;
     rb_eval_string_protect(
         "require 'tmpdir'; ENV['TMPDIR'] = '" RUBY_TMP_DIR "';", &tmpdir_state);

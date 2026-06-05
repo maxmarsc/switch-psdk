@@ -16,9 +16,12 @@
 #include <lognx.hpp>
 
 #ifndef NDEBUG
-namespace {
-//NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+//NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables, misc-use-internal-linkage)
 volatile bool gdb_wait = true;
+#endif
+
+#ifndef NDEBUG
+namespace {
 
 int waitForDebugger() {
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);

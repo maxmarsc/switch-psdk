@@ -146,10 +146,26 @@ class Logger {
       return 1;  // Failed to initialize socket driver
     }
 
+    // Save original fds before nxlink overwrites them
+    if (redirect_std_out) {
+      stdout_fd_ = dup(STDOUT_FILENO);
+    }
+    if (redirect_std_err) {
+      stderr_fd_ = dup(STDERR_FILENO);
+    }
+
     nxLinkFd_ = nxlinkConnectToHost(redirect_std_out, redirect_std_err);
     if (nxLinkFd_ < 0) {
       socketExit();
       nxLinkFd_ = -1;
+      if (stdout_fd_ >= 0) {
+        close(stdout_fd_);
+        stdout_fd_ = -1;
+      }
+      if (stderr_fd_ >= 0) {
+        close(stderr_fd_);
+        stderr_fd_ = -1;
+      }
       return 1;
     }
     return 0;
@@ -160,8 +176,20 @@ class Logger {
       return 1;  // No NxLink to disable
     }
 
-    socketExit();
+    fflush(stdout);
+    fflush(stderr);
+    if (stdout_fd_ >= 0) {
+      dup2(stdout_fd_, STDOUT_FILENO);
+      close(stdout_fd_);
+      stdout_fd_ = -1;
+    }
+    if (stderr_fd_ >= 0) {
+      dup2(stderr_fd_, STDERR_FILENO);
+      close(stderr_fd_);
+      stderr_fd_ = -1;
+    }
 
+    socketExit();
     nxLinkFd_ = -1;
 
     if (!console_) {
@@ -315,6 +343,8 @@ class Logger {
   FILE* log_file_                     = nullptr;
   std::optional<fs::path> log_path_   = std::nullopt;
   const devoptab_t* console_devoptab_ = nullptr;
+  int stdout_fd_                      = -1;
+  int stderr_fd_                      = -1;
 };
 
 //==============================================================================
