@@ -62,7 +62,7 @@ add_custom_target(psdk_demo_base_romfs
 # ##############################################################################
 FetchContent_Declare(pokemonsdk
     GIT_REPOSITORY git@github.com:maxmarsc/switch-pokemonsdk.git
-    GIT_TAG switch-support
+    GIT_TAG switch-support--no-yarb-rebase
     GIT_SHALLOW OFF
 )
 FetchContent_GetProperties(pokemonsdk)
@@ -82,14 +82,42 @@ endif()
 add_custom_command(
     OUTPUT ${ROMFS_DIR}/ruby/app/.demo_copied
     # ~~~
-    # # Demo files (Data, graphics, audio, scripts, etc.)
-    # COMMAND ${CMAKE_COMMAND} -E copy_directory
-    #         "${COMPILED_DEMO_FOLDER}" "${ROMFS_DIR}/ruby/app"
-    # ~~~
     # Demo files (Data, graphics, audio, scripts, etc.)
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${psdk_demo_src_SOURCE_DIR}"
-            "${ROMFS_DIR}/ruby/app"
+            "${COMPILED_DEMO_FOLDER}/audio" "${ROMFS_DIR}/ruby/app/audio"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${COMPILED_DEMO_FOLDER}/Data" "${ROMFS_DIR}/ruby/app/Data"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${COMPILED_DEMO_FOLDER}/Fonts" "${ROMFS_DIR}/ruby/app/Fonts"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${COMPILED_DEMO_FOLDER}/graphics" "${ROMFS_DIR}/ruby/app/graphics"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${COMPILED_DEMO_FOLDER}/plugins" "${ROMFS_DIR}/ruby/app/plugins"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${COMPILED_DEMO_FOLDER}/Saves" "${ROMFS_DIR}/ruby/app/Saves"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${COMPILED_DEMO_FOLDER}/scripts" "${ROMFS_DIR}/ruby/app/Scripts"
+    # COMMAND ${CMAKE_COMMAND} -E copy
+    #         "${COMPILED_DEMO_FOLDER}/Game.rb" "${ROMFS_DIR}/ruby/app/"
+    # ~~~
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+            "${COMPILED_DEMO_FOLDER}/Release/audio" "${ROMFS_DIR}/ruby/app/audio"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+            "${COMPILED_DEMO_FOLDER}/Release/Data" "${ROMFS_DIR}/ruby/app/Data"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+            "${COMPILED_DEMO_FOLDER}/Release/Fonts" "${ROMFS_DIR}/ruby/app/Fonts"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+            "${COMPILED_DEMO_FOLDER}/Release/graphics" "${ROMFS_DIR}/ruby/app/graphics"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+            "${COMPILED_DEMO_FOLDER}/Release/Saves" "${ROMFS_DIR}/ruby/app/Saves"
+    COMMAND ${CMAKE_COMMAND} -E copy
+            "${COMPILED_DEMO_FOLDER}/Release/Game.rb" "${ROMFS_DIR}/ruby/app/"
+    # ~~~
+    # Demo files (Data, graphics, audio, scripts, etc.)
+    # COMMAND ${CMAKE_COMMAND} -E copy_directory
+    #         "${psdk_demo_src_SOURCE_DIR}"
+    #         "${ROMFS_DIR}/ruby/app"
+    # ~~~
     # pokemonsdk scripts
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${pokemonsdk_SOURCE_DIR}"

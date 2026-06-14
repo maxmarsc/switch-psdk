@@ -111,6 +111,22 @@ int rubyWork() {
     }
   }
 
+  // Setting up ENV variables
+  lognx::info("Setting up ENV...");
+  {
+    mkdir(PSDK_HOME_DIR, 0755);
+    int env_state = 0;
+    rb_eval_string_protect("ENV['PSDK_OPENGL_ES'] = '1'", &env_state);
+    if (env_state != 0) {
+      VALUE err           = rb_errinfo();
+      VALUE inspected_err = rb_inspect(err);
+      lognx::error(std::format("Failed to set up ENV: {}",
+                               StringValueCStr(inspected_err)));
+      rb_set_errinfo(Qnil);
+      return 1;
+    }
+  }
+
   // Change the working directory to romfs:/ruby/app
   if (chdir("romfs:/ruby/app") != 0) {
     lognx::error("Failed to change working directory to romfs:/ruby/app");
@@ -137,6 +153,7 @@ int rubyWork() {
     if (RB_TYPE_P(bt, T_ARRAY)) {
       lognx::log("Backtrace:");
       for (int64_t i = 0; i < RARRAY_LEN(bt); i++) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         VALUE aref = RARRAY_AREF(bt, i);
         lognx::log(std::format("  {}", StringValueCStr(aref)));
       }
