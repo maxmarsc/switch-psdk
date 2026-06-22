@@ -6,7 +6,7 @@ include(FetchContent)
 FetchContent_Declare(
   SFML
   GIT_REPOSITORY git@github.com:maxmarsc/switch-sfml-opengl-es2.git
-  GIT_TAG "fix/switch_crash_on_exit"
+  GIT_TAG "feature/switch_support--keyboard"
   GIT_SHALLOW ON
   OVERRIDE_FIND_PACKAGE
 )

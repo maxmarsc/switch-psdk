@@ -89,7 +89,7 @@ end
 
 while running
   sprite.x += ax_x * 0.05
-  sprite.y -= ax_y * 0.05
+  sprite.y += ax_y * 0.05
   sprite.angle = (sprite.angle + 5) % 360 if rotating
   window.update
 end

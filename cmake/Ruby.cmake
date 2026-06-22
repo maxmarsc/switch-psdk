@@ -3,11 +3,11 @@
 # ##############################################################################
 include(FetchContent)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(SWITCH_RUBY_DEBUG ON)
-else()
-  set(SWITCH_RUBY_DEBUG OFF)
-endif()
+# if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+#   set(SWITCH_RUBY_DEBUG ON)
+# else()
+#   set(SWITCH_RUBY_DEBUG OFF)
+# endif()
 
 FetchContent_Declare(switch_ruby
     GIT_REPOSITORY git@github.com:maxmarsc/switch-ruby

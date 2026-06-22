@@ -97,8 +97,8 @@ add_custom_command(
             "${COMPILED_DEMO_FOLDER}/Saves" "${ROMFS_DIR}/ruby/app/Saves"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${COMPILED_DEMO_FOLDER}/scripts" "${ROMFS_DIR}/ruby/app/Scripts"
-    # COMMAND ${CMAKE_COMMAND} -E copy
-    #         "${COMPILED_DEMO_FOLDER}/Game.rb" "${ROMFS_DIR}/ruby/app/"
+    COMMAND ${CMAKE_COMMAND} -E copy
+            "${COMPILED_DEMO_FOLDER}/Game.rb" "${ROMFS_DIR}/ruby/app/"
     # ~~~
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
             "${COMPILED_DEMO_FOLDER}/Release/audio" "${ROMFS_DIR}/ruby/app/audio"
@@ -110,8 +110,8 @@ add_custom_command(
             "${COMPILED_DEMO_FOLDER}/Release/graphics" "${ROMFS_DIR}/ruby/app/graphics"
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
             "${COMPILED_DEMO_FOLDER}/Release/Saves" "${ROMFS_DIR}/ruby/app/Saves"
-    COMMAND ${CMAKE_COMMAND} -E copy
-            "${COMPILED_DEMO_FOLDER}/Release/Game.rb" "${ROMFS_DIR}/ruby/app/"
+    # COMMAND ${CMAKE_COMMAND} -E copy
+    #         "${COMPILED_DEMO_FOLDER}/Release/Game.rb" "${ROMFS_DIR}/ruby/app/"
     # ~~~
     # Demo files (Data, graphics, audio, scripts, etc.)
     # COMMAND ${CMAKE_COMMAND} -E copy_directory
