@@ -17,7 +17,7 @@ void setLevel(Level level);
 int enableConsole(PrintConsole* console);
 int disableConsole();
 int enableNxLink(bool redirect_std_out, bool redirect_std_err);
-int disableNxLink();
+int disableNxLink(bool exitSocketDriver = true);
 int enableFile(std::string_view app_folder);
 int disableFile();
 

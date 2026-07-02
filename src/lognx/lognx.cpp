@@ -171,7 +171,7 @@ class Logger {
     return 0;
   }
 
-  [[nodiscard]] inline int disableNxLink() {
+  [[nodiscard]] inline int disableNxLink(bool exitSocketDriver = true) {
     if (nxLinkFd_ == -1) {
       return 1;  // No NxLink to disable
     }
@@ -189,7 +189,9 @@ class Logger {
       stderr_fd_ = -1;
     }
 
-    socketExit();
+    if (exitSocketDriver) {
+      socketExit();
+    }
     nxLinkFd_ = -1;
 
     if (!console_) {
@@ -364,8 +366,8 @@ int enableNxLink(bool redirect_std_out, bool redirect_std_err) {
   return Logger::getInstance().enableNxLink(redirect_std_out, redirect_std_err);
 }
 
-int disableNxLink() {
-  return Logger::getInstance().disableNxLink();
+int disableNxLink(bool exitSocketDriver) {
+  return Logger::getInstance().disableNxLink(exitSocketDriver);
 }
 
 int enableFile(std::string_view app_folder) {
