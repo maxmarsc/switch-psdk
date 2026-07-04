@@ -39,7 +39,9 @@ int main(int /*argc*/, char* /*argv*/[]) {
   }
   lognx::enableNxLink(true, true);
   lognx::setLevel(lognx::Level::kDebug);
-  tracy::StartupProfiler();
+  if (!tracy::IsProfilerStarted()) {
+    tracy::StartupProfiler();
+  }
 
   // Configure our supported input layout: a single player with standard controller styles
   padConfigureInput(1, HidNpadStyleSet_NpadStandard);
@@ -74,7 +76,9 @@ int main(int /*argc*/, char* /*argv*/[]) {
   }
 
   // Deinitialize and clean up resources used by the console (important!)
-  tracy::ShutdownProfiler();
+  if (tracy::IsProfilerStarted()) {
+    tracy::ShutdownProfiler();
+  }
   lognx::disableConsole();
   lognx::disableNxLink(false);
   socketExit();

@@ -18,6 +18,7 @@ target_link_libraries(
   litergss2_app
   PRIVATE arm_neon_clangd_fix 
   LiteRGSS2
+  tracy_ruby
   Ruby::ruby
   lognx
 )

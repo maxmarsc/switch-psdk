@@ -25,6 +25,7 @@ include(LiteCGSS)
 include(Ruby)
 include(LiteRGSS2)
 include(SFMLAudio)
+include(TracyRuby)
 
 # Find libnx, which is required by our application.
 find_package(Libnx REQUIRED)

@@ -25,6 +25,7 @@ extern bool rb_free_at_exit;
 extern "C" {
 // NOLINTNEXTLINE(readability-identifier-naming)
 void Init_LiteRGSS();
+void Init_tracy_ruby();
 }
 
 #include <sys/iosupport.h>
@@ -150,7 +151,9 @@ int main(int argc, char** argv) {
   // Load the built-in features & extensions
   ruby_options(3, ruby_opts.data());
   Init_LiteRGSS();
+  Init_tracy_ruby();
   rb_provide("LiteRGSS");
+  rb_provide("tracy_ruby");
   // Disable buffering for stdout and stderr
   rb_eval_string("STDOUT.sync = true; STDERR.sync = true");
 
