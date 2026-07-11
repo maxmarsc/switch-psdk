@@ -12,6 +12,7 @@
 #include <switch.h>
 // lognx
 #include <lognx.hpp>
+#include <tracy/Tracy.hpp>
 
 #ifndef NDEBUG
 #define RUBY_DEBUG 1
@@ -26,6 +27,7 @@ extern "C" {
 // NOLINTBEGIN(readability-identifier-naming)
 void Init_LiteRGSS();
 void Init_SFMLAudio();
+void Init_tracy_ruby();
 // NOLINTEND(readability-identifier-naming)
 }
 
@@ -216,6 +218,8 @@ int main(int argc, char** argv) {
   rb_provide("LiteRGSS");
   Init_SFMLAudio();
   rb_provide("SFMLAudio");
+  Init_tracy_ruby();
+  rb_provide("tracy_ruby");
   // Stubbing these missing extensions are these are not needed to bootstrap
   rb_provide("openssl");
   rb_provide("net/http");
@@ -230,8 +234,10 @@ int main(int argc, char** argv) {
   rb_free_at_exit = true;
 
   // Setup load paths and temp dir, then run the ruby app
+  tracy::StartupProfiler();
   int result = rubyWork();
   ruby_cleanup(0);
+  tracy::ShutdownProfiler();
 
   lognx::enableConsole(nullptr);
   lognx::info("Waiting for [+] button to exit");

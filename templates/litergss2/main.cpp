@@ -23,9 +23,10 @@ volatile bool gdb_wait = true;
 extern bool rb_free_at_exit;
 
 extern "C" {
-// NOLINTNEXTLINE(readability-identifier-naming)
+// NOLINTBEGIN(readability-identifier-naming)
 void Init_LiteRGSS();
 void Init_tracy_ruby();
+// NOLINTEND(readability-identifier-naming)
 }
 
 #include <sys/iosupport.h>

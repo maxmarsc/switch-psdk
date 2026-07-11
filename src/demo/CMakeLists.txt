@@ -21,6 +21,7 @@ target_link_libraries(
   PRIVATE arm_neon_clangd_fix
   LiteRGSS2
   SFMLAudio
+  tracy_ruby
   Ruby::ruby
   lognx
 )
@@ -62,7 +63,7 @@ add_custom_target(psdk_demo_base_romfs
 # ##############################################################################
 FetchContent_Declare(pokemonsdk
     GIT_REPOSITORY git@github.com:maxmarsc/switch-pokemonsdk.git
-    GIT_TAG switch-support--no-yarb-rebase
+    GIT_TAG switch-support
     GIT_SHALLOW OFF
 )
 FetchContent_GetProperties(pokemonsdk)
