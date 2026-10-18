@@ -46,7 +46,7 @@ set(_romfs_stamp ${ROMFS_DIR}/.base_copied)
 add_custom_command(
     OUTPUT ${_romfs_stamp}
     COMMAND ${CMAKE_COMMAND} -E remove_directory "${ROMFS_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory 
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/romfs"
             "${ROMFS_DIR}"
     COMMAND ${CMAKE_COMMAND} -E touch "${_romfs_stamp}"

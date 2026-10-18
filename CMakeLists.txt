@@ -55,5 +55,11 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
   FetchContent_MakeAvailable(arm_neon_clangd_fix)
 endif()
 
+# Make sure clang-format is disabled in the build tree
+file(WRITE ${CMAKE_BINARY_DIR}/.clang-format "DisableFormat: true\n")
+
+# ##############################################################################
+# SOURCES
+# ##############################################################################
 add_subdirectory(src)
 add_subdirectory(templates)

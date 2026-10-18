@@ -224,6 +224,7 @@ int main(int argc, char** argv) {
   rb_provide("openssl");
   rb_provide("net/http");
   rb_provide("psych");
+  rb_provide("base64");
   // yaml is provided, but it requires psych which is not, so we need to stub it by providing the absolute path to yaml.rb in LOADED_FEATURES
   // see: https://ruby-doc.org/3.4.1/Kernel.html#method-i-require
   rb_provide(RUBY_STDLIB_DIR "/yaml.rb");
