@@ -118,8 +118,10 @@ int rubyWork() {
   {
     mkdir(PSDK_HOME_DIR, 0755);
     int env_state = 0;
-    rb_eval_string_protect("ENV['PSDK_OPENGL_ES'] = '1'; ARGV << '--scale=3';",
-                           &env_state);
+    rb_eval_string_protect(
+        "ENV['PSDK_OPENGL_ES'] = '1';"
+        "ARGV << '--scale=3';",
+        &env_state);
     if (env_state != 0) {
       VALUE err           = rb_errinfo();
       VALUE inspected_err = rb_inspect(err);

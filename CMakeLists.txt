@@ -20,12 +20,12 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # SwitchTools provide various helper functions for building Switch file formats.
 include(SwitchTools)
+include(Ruby)
+include(TracyRuby)
 include(SFML)
 include(LiteCGSS)
-include(Ruby)
 include(LiteRGSS2)
 include(SFMLAudio)
-include(TracyRuby)
 
 # Find libnx, which is required by our application.
 find_package(Libnx REQUIRED)
@@ -36,8 +36,11 @@ set(LIBNX_FOUND
     CACHE BOOL "Forcing Libnx found for dependencies" FORCE
 )
 
-set(COMPILED_DEMO_FOLDER "" CACHE PATH "Path to the compiled demo")
-if (NOT COMPILED_DEMO_FOLDER)
+set(COMPILED_DEMO_FOLDER
+    ""
+    CACHE PATH "Path to the compiled demo"
+)
+if(NOT COMPILED_DEMO_FOLDER)
   message(FATAL_ERROR "COMPILED_DEMO_FOLDER is not set")
 endif()
 
