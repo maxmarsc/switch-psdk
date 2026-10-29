@@ -5,8 +5,8 @@ include(FetchContent)
 
 FetchContent_Declare(
   sfmlaudio
-  GIT_REPOSITORY git@github.com:maxmarsc/switch-sfmlaudio.git
-  GIT_TAG "feature/switch_support"
+  GIT_REPOSITORY git@gitlab.com:maxmarsc/sfmlaudio.git
+  GIT_TAG 93d508e8028fe57dba0afbd674f91ecc9391f31b
   GIT_SHALLOW ON
   SOURCE_SUBDIR switch
 )
