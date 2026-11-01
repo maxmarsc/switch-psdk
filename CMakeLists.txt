@@ -10,14 +10,32 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
-# CMake modules
-
 # We have to add the cmake directory to have access to the Switch tools and also
 # find_package for libnx.
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-# Required libraries and utilities
+# ##############################################################################
+# Project options
+# ##############################################################################
+option(
+  LOAD_COMPILED_PROJECT
+  "Load the compiled version of the project. Non-compiled load is very experimental"
+  # Switching between the two values require cleaning the build/src/demo folder
+  ON
+)
+set(PROJECT_FOLDER
+    ""
+    CACHE
+      PATH
+      "Path to the project, containing the Release folder built with --no-yarb"
+)
+if(NOT PROJECT_FOLDER)
+  message(FATAL_ERROR "PROJECT_FOLDER is not set")
+endif()
 
+# ##############################################################################
+# Dependencies & utilities loading
+# ##############################################################################
 # SwitchTools provide various helper functions for building Switch file formats.
 include(SwitchTools)
 include(Ruby)
@@ -35,22 +53,6 @@ set(LIBNX_FOUND
     TRUE
     CACHE BOOL "Forcing Libnx found for dependencies" FORCE
 )
-
-option(
-  LOAD_COMPILED_PROJECT
-  "Load the compiled version of the project. Non-compiled load is very experimental"
-  # Switching between the two values require cleaning the build/src/demo folder
-  ON
-)
-set(PROJECT_FOLDER
-    ""
-    CACHE
-      PATH
-      "Path to the project, containing the Release folder built with --no-yarb"
-)
-if(NOT PROJECT_FOLDER)
-  message(FATAL_ERROR "PROJECT_FOLDER is not set")
-endif()
 
 # ##############################################################################
 # CLANGD
