@@ -17,6 +17,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 # ##############################################################################
 # Project options
 # ##############################################################################
+option(BUILD_TEMPLATES "Build the helper templates" OFF)
 option(
   LOAD_COMPILED_PROJECT
   "Load the compiled version of the project. Non-compiled load is very experimental"
@@ -75,4 +76,6 @@ file(WRITE ${CMAKE_BINARY_DIR}/.clang-format "DisableFormat: true\n")
 # SOURCES
 # ##############################################################################
 add_subdirectory(src)
-add_subdirectory(templates)
+if(BUILD_TEMPLATES)
+  add_subdirectory(templates)
+endif()
