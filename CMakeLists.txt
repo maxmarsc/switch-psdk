@@ -38,7 +38,7 @@ set(LIBNX_FOUND
 
 option(
   LOAD_COMPILED_PROJECT
-  "Load the compiled version of the project. Non-compiled load is very experimental and require EXTERNAL_PSDK_PATH to be set"
+  "Load the compiled version of the project. Non-compiled load is very experimental"
   # Switching between the two values require cleaning the build/src/demo folder
   ON
 )
@@ -50,12 +50,6 @@ set(PROJECT_FOLDER
 )
 if(NOT PROJECT_FOLDER)
   message(FATAL_ERROR "PROJECT_FOLDER is not set")
-endif()
-if(NOT LOAD_COMPILED_PROJECT AND NOT EXTERNAL_PSDK_PATH)
-  message(
-    FATAL_ERROR
-      "EXTERNAL_PSDK_PATH must be set when LOAD_COMPILED_PROJECT is OFF"
-  )
 endif()
 
 # ##############################################################################

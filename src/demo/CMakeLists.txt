@@ -118,7 +118,7 @@ else()
             "${PROJECT_FOLDER}/Release/psdk" "${ROMFS_DIR}/ruby/app/psdk"
     # ~~~
     # pokemonsdk scripts
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${EXTERNAL_PSDK_PATH}"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_FOLDER}/pokemonsdk"
             "${ROMFS_DIR}/ruby/app/pokemonsdk"
     # ~~~
     COMMAND ${CMAKE_COMMAND} -E touch ${ROMFS_DIR}/ruby/app/.demo_copied
