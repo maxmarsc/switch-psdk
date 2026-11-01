@@ -36,12 +36,26 @@ set(LIBNX_FOUND
     CACHE BOOL "Forcing Libnx found for dependencies" FORCE
 )
 
-set(COMPILED_DEMO_FOLDER
-    ""
-    CACHE PATH "Path to the compiled demo"
+option(
+  LOAD_COMPILED_PROJECT
+  "Load the compiled version of the project. Non-compiled load is very experimental and require EXTERNAL_PSDK_PATH to be set"
+  # Switching between the two values require cleaning the build/src/demo folder
+  ON
 )
-if(NOT COMPILED_DEMO_FOLDER)
-  message(FATAL_ERROR "COMPILED_DEMO_FOLDER is not set")
+set(PROJECT_FOLDER
+    ""
+    CACHE
+      PATH
+      "Path to the project, containing the Release folder built with --no-yarb"
+)
+if(NOT PROJECT_FOLDER)
+  message(FATAL_ERROR "PROJECT_FOLDER is not set")
+endif()
+if(NOT LOAD_COMPILED_PROJECT AND NOT EXTERNAL_PSDK_PATH)
+  message(
+    FATAL_ERROR
+      "EXTERNAL_PSDK_PATH must be set when LOAD_COMPILED_PROJECT is OFF"
+  )
 endif()
 
 # ##############################################################################
