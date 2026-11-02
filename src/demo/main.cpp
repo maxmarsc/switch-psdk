@@ -133,8 +133,10 @@ int rubyWork() {
   }
 
   // Misc tricks
+#ifndef LOAD_COMPILED_PROJECT
   rb_eval_string(
-      "::Kernel::Loaded = {}");       // only if loading uncompiled version
+      "::Kernel::Loaded = {}");  // only if loading uncompiled version
+#endif
   mkdir("sdmc:/switch/.psdk", 0755);  // create RW dir
 
   // Change the working directory to romfs:/ruby/app

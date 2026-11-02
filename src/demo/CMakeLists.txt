@@ -32,6 +32,7 @@ target_compile_definitions(
           PSDK_HOME_DIR="sdmc:/switch/.psdk_home"
           RUBY_STDLIB_DIR="romfs:/ruby/3.4.0"
           RUBY_MAIN_APP="romfs:/ruby/app/Game.rb"
+          $<$<BOOL:LOAD_COMPILED_PROJECT>:LOAD_COMPILED_PROJECT>
 )
 
 # ##############################################################################
